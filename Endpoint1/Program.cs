@@ -5,7 +5,6 @@ using NServiceBus.Transport.AzureServiceBus;
 
 class Program
 {
-    internal static IMessageSession MessageSession;
     static void Main()
     {
         MainAsync().GetAwaiter().GetResult();
@@ -38,9 +37,6 @@ class Program
 
         var endpointInstance = await Endpoint.Start(endpointConfiguration)
             .ConfigureAwait(false);
-
-        // can be also injected into a container
-        MessageSession = endpointInstance;
 
         try
         {
