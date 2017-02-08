@@ -55,8 +55,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CrmMessage.cs" />
+    <Compile Include="CrmMessageHandler.cs" />
     <Compile Include="Message2Handler.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="StampCrmMessagesWithHeaderFeature.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

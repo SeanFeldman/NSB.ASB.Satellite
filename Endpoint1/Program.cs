@@ -15,8 +15,6 @@ class Program
     {
         Console.Title = "Samples.Azure.ServiceBus.Endpoint1";
 
-        #region config
-
         var endpointConfiguration = new EndpointConfiguration("Samples.Azure.ServiceBus.Endpoint1");
         endpointConfiguration.OverrideLocalAddress("myqueue");
         endpointConfiguration.SendFailedMessagesTo("error");
@@ -30,12 +28,12 @@ class Program
         transport.UseForwardingTopology();
         transport.BrokeredMessageBodyType(SupportedBrokeredMessageBodyTypes.Stream);
 
-        #endregion
-
         endpointConfiguration.UsePersistence<InMemoryPersistence>();
         endpointConfiguration.UseSerialization<JsonSerializer>();
         endpointConfiguration.EnableInstallers();
         endpointConfiguration.Recoverability().DisableLegacyRetriesSatellite();
+
+        transport.Routing().RouteToEndpoint(typeof(Message1), "Samples.Azure.ServiceBus.Endpoint2");
 
         var endpointInstance = await Endpoint.Start(endpointConfiguration)
             .ConfigureAwait(false);
@@ -58,12 +56,11 @@ class Program
                     return;
                 }
 
-                var orderId = Guid.NewGuid();
                 var message = new Message1
                 {
                     Property = "Hello from Endpoint1"
                 };
-                await endpointInstance.Send("Samples.Azure.ServiceBus.Endpoint2", message)
+                await endpointInstance.Send(message)
                     .ConfigureAwait(false);
                 Console.WriteLine("Message1 sent");
             }
