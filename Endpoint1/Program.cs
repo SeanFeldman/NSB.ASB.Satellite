@@ -18,6 +18,7 @@ class Program
         #region config
 
         var endpointConfiguration = new EndpointConfiguration("Samples.Azure.ServiceBus.Endpoint1");
+        endpointConfiguration.OverrideLocalAddress("myqueue");
         endpointConfiguration.SendFailedMessagesTo("error");
         var transport = endpointConfiguration.UseTransport<AzureServiceBusTransport>();
         var connectionString = Environment.GetEnvironmentVariable("AzureServiceBus.ConnectionString");

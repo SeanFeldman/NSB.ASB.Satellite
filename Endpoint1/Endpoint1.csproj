@@ -55,7 +55,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CrmSatelliteFeature.cs" />
     <Compile Include="Message2Handler.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
