@@ -32,6 +32,7 @@
         public override Task Invoke(IIncomingPhysicalMessageContext context, Func<Task> next)
         {
             //I need to check to see if it already has a header else it modifies the response messages from endpoint 2
+            
             if (!context.Message.Headers.ContainsKey("NServiceBus.EnclosedMessageTypes"))
             {
                 context.Message.Headers[Headers.EnclosedMessageTypes] = typeof(CrmMessage).AssemblyQualifiedName;
