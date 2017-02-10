@@ -16,7 +16,7 @@ class Program
         Console.Title = "Samples.Azure.ServiceBus.Endpoint1";
 
         var endpointConfiguration = new EndpointConfiguration("Samples.Azure.ServiceBus.Endpoint1");
-        endpointConfiguration.OverrideLocalAddress("myqueue");
+        endpointConfiguration.OverrideLocalAddress("crmevents");
         endpointConfiguration.SendFailedMessagesTo("error");
         var transport = endpointConfiguration.UseTransport<AzureServiceBusTransport>();
         var connectionString = Environment.GetEnvironmentVariable("AzureServiceBus.ConnectionString");

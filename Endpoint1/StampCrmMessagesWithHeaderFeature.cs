@@ -31,7 +31,7 @@
     {
         public override Task Invoke(IIncomingPhysicalMessageContext context, Func<Task> next)
         {
-            context.Message.Headers[Headers.EnclosedMessageTypes] = typeof(CrmMessage).AssemblyQualifiedName;
+            context.Message.Headers[Headers.EnclosedMessageTypes] = typeof(CrmMessage2).AssemblyQualifiedName;
             return next();
         }
     }
