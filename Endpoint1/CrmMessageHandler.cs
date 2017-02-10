@@ -6,17 +6,18 @@
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     using System.Collections.Generic;
+    using System;
+    
 
-    public class CrmMessageHandler : IHandleMessages<CrmMessage2>
+    public class CrmMessageHandler : IHandleMessages<CrmMessage>
     {
         static ILog log = LogManager.GetLogger<CrmMessageHandler>();
 
-        public Task Handle(CrmMessage2 message, IMessageHandlerContext context)
+        public Task Handle(CrmMessage message, IMessageHandlerContext context)
         {
             log.Info($"Received CRM message id: {context.MessageId} (body id: {message.messageId})");
-            //dynamic json = JObject.Parse(message.body.InputParameters[0].ToString());
-           
-            //string[] storeNames = json.SelectToken("Stores").Select(s => (string)s).ToArray();
+            
+            //Extrace the contact information from the JSON based raw message. 
 
             string contactid = message.body.PrimaryEntityId;
             string messagename = message.body.MessageName;
@@ -26,10 +27,13 @@
             string lastname = message.body.InputParameters[0].value.Attributes.Find(x => x.key == "lastname").value.ToString();
             string fulladdress = message.body.InputParameters[0].value.Attributes.Find(x => x.key == "address1_composite").value.ToString();
             string emailaddress = message.body.InputParameters[0].value.Attributes.Find(x => x.key == "emailaddress1").value.ToString();
-                        
+            DateTime createddate = DateTime.Parse(message.body.OperationCreatedOn);
+
+
+
             return context.Send(new Message1
             {
-                Property = $"CRM says hello. MessageName='{message.body.MessageName}'"
+                Property = $"CRM says hello. New Contact is '{fullname}'"
 
             });
         }

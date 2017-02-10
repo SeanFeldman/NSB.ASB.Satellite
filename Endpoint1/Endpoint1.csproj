@@ -60,7 +60,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CrmMessage.cs" />
-    <Compile Include="CrmMessage2.cs" />
     <Compile Include="CrmMessageHandler.cs" />
     <Compile Include="Message2Handler.cs" />
     <Compile Include="Program.cs" />
