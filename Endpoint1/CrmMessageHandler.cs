@@ -15,15 +15,14 @@
 
         public Task Handle(CrmMessage message, IMessageHandlerContext context)
         {
-            log.Info($"Received CRM message id: {context.MessageId} (body id: {message.messageId})");
+            log.Info($"Received CRM message id: {context.MessageId} (body id: {message.CorrelationId})");
             
-            //Extrace the contact information from the JSON based raw message. 
+            //Extract the contact information from the JSON based raw message. 
 
-            string contactid = message.body.PrimaryEntityId;
-            string messagename = message.body.MessageName;
-            string createdbyid = message.body.InitiatingUserId;
-            DateTime createddate = DateTime.Parse(message.body.OperationCreatedOn);
-            //string fullname = message.body.InputParameters[0].value.Attributes.Find(x => x.key == "fullname").value.ToString();
+            string contactid = message.PrimaryEntityId;
+            string messagename = message.MessageName;
+            string createdbyid = message.InitiatingUserId;
+            DateTime createddate = message.OperationCreatedOn;
             string fullname = GetCrmValue(message,"fullname");
             string firstname = GetCrmValue(message, "firstname");
             string lastname = GetCrmValue(message, "lastname");
@@ -42,11 +41,11 @@
         private string GetCrmValue(CrmMessage message, string key)
         {
             var returnvalue = string.Empty;
-            var attribute = message.body.InputParameters[0].value.Attributes.Find(x => x.key == key);
+            var attribute = message.InputParameters[0].value.Attributes.Find(x => x.key == key);
 
             if (attribute != null)
             {
-                returnvalue = message.body.InputParameters[0].value.Attributes.Find(x => x.key == key).value.ToString();
+                returnvalue = message.InputParameters[0].value.Attributes.Find(x => x.key == key).value.ToString();
 
             }
 
