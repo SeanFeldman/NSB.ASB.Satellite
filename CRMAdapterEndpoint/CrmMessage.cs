@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NServiceBus;
 
 
 namespace CRMAdapterEndpoint.Messages
 {
-    
         public class Attribute
         {
             public string key { get; set; }
@@ -168,7 +164,7 @@ namespace CRMAdapterEndpoint.Messages
             public string UserId { get; set; }
         }
 
-      
+
 
     }
 

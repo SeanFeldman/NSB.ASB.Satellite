@@ -1,17 +1,17 @@
-﻿namespace CRMAdapterEndpoint
+using System;
+using System.Threading.Tasks;
+using CustomerManagementMessages;
+using Microsoft.Xrm.Sdk;
+using NServiceBus;
+using NServiceBus.Logging;
+
+namespace CRMAdapterEndpoint
 {
-    using System.Threading.Tasks;
-    using NServiceBus;
-    using NServiceBus.Logging;
-    using System;
-    using CRMAdapterEndpoint.Messages;
-    using CustomerManagementMessages;
-
-    public class CrmMessageHandler : IHandleMessages<CrmMessage>
+    public class NativeCrmMessageHandler : IHandleMessages<RemoteExecutionContext>
     {
-        static ILog log = LogManager.GetLogger<CrmMessageHandler>();
+        static ILog log = LogManager.GetLogger<NativeCrmMessageHandler>();
 
-        public Task Handle(CrmMessage message, IMessageHandlerContext context)
+        public Task Handle(RemoteExecutionContext message, IMessageHandlerContext context)
         {
             log.Info($"Received CRM message id: {context.MessageId} (body id: {message.CorrelationId})");
 
@@ -24,8 +24,8 @@
 
             //Extract the contact information from the JSON based raw message and assign it into our message.
             var NewCustomer = new NewCustomerReceived();
-            NewCustomer.ContactId = new Guid(message.PrimaryEntityId);
-            NewCustomer.CreatedById = new Guid(message.InitiatingUserId);
+            NewCustomer.ContactId = message.PrimaryEntityId;
+            NewCustomer.CreatedById = message.InitiatingUserId;
             DateTime createddate = message.OperationCreatedOn;
             NewCustomer.FullName = GetCrmValue(message, "fullname");
             NewCustomer.FirstName = GetCrmValue(message, "firstname");
@@ -37,15 +37,14 @@
 
 
         }
-
-        private string GetCrmValue(CrmMessage message, string key)
+        private string GetCrmValue(RemoteExecutionContext message, string key)
         {
             var returnvalue = string.Empty;
-            var attribute = message.InputParameters[0].value.Attributes.Find(x => x.key == key);
+            // var attribute = message.InputParameters.Contains[key];//.ToString()//value.Attributes.Find(x => x.key == key);
 
-            if (attribute != null)
+            if (message.InputParameters.Contains(key))
             {
-                returnvalue = message.InputParameters[0].value.Attributes.Find(x => x.key == key).value.ToString();
+                returnvalue = message.InputParameters[key].ToString();
             }
 
             return returnvalue;
