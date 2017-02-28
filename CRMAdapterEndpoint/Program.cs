@@ -44,9 +44,6 @@ namespace CRMAdapterEndpoint
 
             nativeEndpointConfiguration.Recoverability().DisableLegacyRetriesSatellite();
 
-            var conventions = nativeEndpointConfiguration.Conventions();
-            conventions.DefiningCommandsAs(type => type.Namespace == "Microsoft.Xrm.Sdk");
-
             var nativeEndpointInstance = await Endpoint.Start(nativeEndpointConfiguration)
                 .ConfigureAwait(false);
 
