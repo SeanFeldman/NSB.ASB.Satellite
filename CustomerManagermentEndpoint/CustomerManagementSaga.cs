@@ -25,7 +25,7 @@ namespace CustomerManagermentEndpoint
             mapper.ConfigureMapping<NewCustomerReceived>(m => m.ContactId).ToSaga(s => s.ContactId);
             mapper.ConfigureMapping<FraudReviewResult>(m => m.ContactId).ToSaga(s => s.ContactId);
             mapper.ConfigureMapping<CreateCustomerTaskResponse>(m => m.ContactId).ToSaga(s => s.ContactId);
-            mapper.ConfigureMapping<UpdateTaskResponse>(m => m.TaskId).ToSaga(s => s.ContactId);
+            mapper.ConfigureMapping<UpdateTaskResponse>(m => m.TaskId).ToSaga(s => s.TaskCreatedResponse.TaskId);
         }
 
 
