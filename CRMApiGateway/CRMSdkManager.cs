@@ -1,4 +1,6 @@
-﻿namespace CRMApiGateway
+﻿using CRMApiGatewayEndpoint;
+
+namespace CRMApiGateway
 {
     using System;
     using Microsoft.Xrm.Sdk;
@@ -23,8 +25,8 @@
             task["subject"] =subject;
             task["description"] = description;
             task["scheduledend"] = deadline;
-            task["statecode"] = 0;
-            task["statuscode"] = 3;
+            task["statecode"] = (int)CRMApiManager.TaskState.Open;
+            task["statuscode"] = (int)CRMApiManager.TaskStatus.InProgress;
 
             serviceclient.Create(task);
 

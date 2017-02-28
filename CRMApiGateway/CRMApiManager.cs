@@ -33,7 +33,8 @@
         }
 
 
-        public async Task<string> CreateTaskForContact(Guid ContactID, string Subject, string Description, DateTimeOffset Deadline)
+        public async Task<string> CreateTaskForContact(Guid ContactID, string Subject, string Description,
+            DateTimeOffset Deadline)
         {
             string newtaskuri;
 
@@ -52,7 +53,7 @@
             task.Add("regardingobjectid_contact@odata.bind", crmcontactURI);
 
             HttpRequestMessage createRequest =
-               new HttpRequestMessage(HttpMethod.Post, "tasks");
+                new HttpRequestMessage(HttpMethod.Post, "tasks");
             createRequest.Content = new StringContent(task.ToString(),
                 Encoding.UTF8, "application/json");
             HttpResponseMessage createResponse =
@@ -72,29 +73,41 @@
             }
         }
 
-        public async Task<Guid> UpdateTask(Guid TaskId, bool MarkComplete, Guid AssignTo, string Description)
+        internal enum TaskStatus
+        {
+            InProgress = 3,
+            Completed = 5
+        }
+
+        internal enum TaskState
+        {
+            Open = 0,
+            Completed = 1,
+            Cancelled = 2
+        }
+
+        public async Task<Guid> UpdateTask(Guid taskId, bool markAsCompleted, Guid assignTo, string description)
         {
             //Get the URI from the connectionstring and build the proper Customer URI
-            Console.WriteLine($"Updating Task {TaskId} with Mark complete = {MarkComplete}");
-            var taskUri = httpClient.BaseAddress.OriginalString + $"tasks({TaskId})?$select=regardingobjectid_contact";
+            Console.WriteLine($"Updating Task {taskId} with Mark complete = {markAsCompleted}");
+            var taskUri = httpClient.BaseAddress.OriginalString + $"tasks({taskId})?$select=regardingobjectid_contact";
 
 
             JObject taskAdd = new JObject();
 
-            if (MarkComplete)
+            if (markAsCompleted)
             {
-                taskAdd.Add("statuscode", 5);
-                taskAdd.Add("statecode", 1);
+                taskAdd.Add("statuscode", (int) TaskStatus.Completed);
+                taskAdd.Add("statecode", (int) TaskState.Completed);
                 taskAdd.Add("percentcomplete", 100);
             }
             else
             {
-                taskAdd.Add("statuscode", 3);
-                taskAdd.Add("statecode", 0);
-
+                taskAdd.Add("statuscode", (int) TaskStatus.InProgress);
+                taskAdd.Add("statecode", (int) TaskState.Open);
             }
-            taskAdd.Add("description", Description);
-            // taskAdd.Add("owninguser", AssignTo);
+            taskAdd.Add("description", description);
+            // taskAdd.Add("owninguser", assignTo);
 
             HttpRequestMessage updateRequest1 = new HttpRequestMessage(
                 new HttpMethod("PATCH"), taskUri);
@@ -105,17 +118,13 @@
             if (updateResponse1.StatusCode == HttpStatusCode.NoContent) //204
             {
                 // var ContactID = updateResponse1.Headers.GetValues("OData-")
-                Console.WriteLine($"Task {TaskId} has been updated");
-                return new Guid();// updateResponse1.Content.Headers.GetValues("regardingobjectid_contact"));
-            }
-            else
-            {
-                //Console.WriteLine("Failed to update contact for reason: {0}",
-                //  updateResponse1.ReasonPhrase);
-                throw new CrmHttpResponseException(updateResponse1.Content);
+                Console.WriteLine($"Task {taskId} has been updated");
+                return new Guid(); // updateResponse1.Content.Headers.GetValues("regardingobjectid_contact"));
             }
 
-
+            //Console.WriteLine("Failed to update contact for reason: {0}",
+            //  updateResponse1.ReasonPhrase);
+            throw new CrmHttpResponseException(updateResponse1.Content);
         }
 
         public void Dispose()
@@ -124,7 +133,6 @@
             {
                 httpClient.CancelPendingRequests();
                 httpClient.Dispose();
-
             }
         }
     }
