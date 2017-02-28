@@ -8,15 +8,12 @@ using Microsoft.Xrm.Sdk.Client;
 
 namespace CRMAdapterEndpoint
 {
-    /* This adapter endpoint will be a multihost that will host both a native endpoint that handles messages from Dynamics 365.  The second endpoint 
-     * will be a publisher of native NServiceBus messages. 
-     
+    /* This adapter endpoint will be a multihost that will host both a native endpoint that handles messages from Dynamics 365.  The second endpoint
+     * will be a publisher of native NServiceBus messages.
      */
     class Program
     {
         internal static IMessageSession MessageSession;
-
-
 
         static void Main(string[] args)
         {
@@ -25,8 +22,6 @@ namespace CRMAdapterEndpoint
 
         static async Task MainAsync()
         {
-
-
             Console.Title = "Multi-Host CRMAdapterEndpoint Host";
 
             var nativeEndpointConfiguration = new EndpointConfiguration("Samples.ServiceBus.CRMAdapterEndpoint");
@@ -50,22 +45,13 @@ namespace CRMAdapterEndpoint
             nativeEndpointConfiguration.Recoverability().DisableLegacyRetriesSatellite();
 
             var conventions = nativeEndpointConfiguration.Conventions();
-            conventions.DefiningCommandsAs(
-                type =>
-                {
-                    return type.Namespace == "Microsoft.Xrm.Sdk";
-                });
+            conventions.DefiningCommandsAs(type => type.Namespace == "Microsoft.Xrm.Sdk");
 
-           
             var nativeEndpointInstance = await Endpoint.Start(nativeEndpointConfiguration)
                 .ConfigureAwait(false);
 
-            // can be also injected into a container.  The native endpoint has a Feature that needs the message session. 
+            // can be also injected into a container.  The native endpoint has a Feature that needs the message session.
             MessageSession = nativeEndpointInstance;
-
-
-
-
 
             try
             {
@@ -82,7 +68,7 @@ namespace CRMAdapterEndpoint
                         return;
                     }
 
-                 }
+                }
             }
             finally
             {
