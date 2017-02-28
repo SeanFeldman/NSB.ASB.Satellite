@@ -1,32 +1,28 @@
-﻿using Microsoft.Crm.Sdk.Samples.HelperCode;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Text;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using System.Linq;
-using System.Net;
-
-
-namespace CRMApiGatewayEndpoint
+﻿namespace CRMApiGatewayEndpoint
 {
+    using Microsoft.Crm.Sdk.Samples.HelperCode;
+    using Newtonsoft.Json.Linq;
+    using System;
+    using System.Text;
+    using System.Net.Http;
+    using System.Net.Http.Headers;
+    using System.Threading.Tasks;
+    using System.Linq;
+    using System.Net;
 
-      public class CRMApiManager:IDisposable
+
+    public class CRMApiManager : IDisposable
     {
-        private  HttpClient httpClient { get; }
+        private HttpClient httpClient { get; }
 
         public CRMApiManager()
         {
-            
             Configuration config = new FileConfiguration(null);
-            
+
             Authentication auth = new Authentication(config);
             //Next use a HttpClient object to connect to specified CRM Web service.
             httpClient = new HttpClient(auth.ClientHandler, true);
-            //Define the Web API base address, the max period of execute time, the 
+            //Define the Web API base address, the max period of execute time, the
             // default OData version, and the default response payload format.
             httpClient.BaseAddress = new Uri(config.ServiceUrl + "api/data/v8.1/");
             httpClient.Timeout = new TimeSpan(0, 2, 0);
@@ -34,14 +30,12 @@ namespace CRMApiGatewayEndpoint
             httpClient.DefaultRequestHeaders.Add("OData-Version", "4.0");
             httpClient.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
-            
-
-          }
+        }
 
 
-        public async Task<string> CreateTaskForContact(Guid ContactID,string Subject, string Description, DateTimeOffset Deadline)
+        public async Task<string> CreateTaskForContact(Guid ContactID, string Subject, string Description, DateTimeOffset Deadline)
         {
-           string newtaskuri;
+            string newtaskuri;
 
             //Get the URI from the connectionstring and build the proper Customer URI
             //var connection = System.Configuration.ConfigurationManager.ConnectionStrings["default"].ConnectionString;
@@ -70,7 +64,7 @@ namespace CRMApiGatewayEndpoint
 
                 Console.WriteLine("Task '{0}' created. {1}", task.GetValue("subject"), newtaskuri);
                 return newtaskuri;
-             }
+            }
             else
             {
                 Console.WriteLine("Failed to create task for reason: {0}.", createResponse.ReasonPhrase);
@@ -80,14 +74,13 @@ namespace CRMApiGatewayEndpoint
 
         public async Task<Guid> UpdateTask(Guid TaskId, bool MarkComplete, Guid AssignTo, string Description)
         {
-
             //Get the URI from the connectionstring and build the proper Customer URI
             Console.WriteLine($"Updating Task {TaskId} with Mark complete = {MarkComplete}");
             var taskUri = httpClient.BaseAddress.OriginalString + $"tasks({TaskId})?$select=regardingobjectid_contact";
-           
-            
+
+
             JObject taskAdd = new JObject();
-           
+
             if (MarkComplete)
             {
                 taskAdd.Add("statuscode", 5);
@@ -101,7 +94,7 @@ namespace CRMApiGatewayEndpoint
 
             }
             taskAdd.Add("description", Description);
-           // taskAdd.Add("owninguser", AssignTo);
+            // taskAdd.Add("owninguser", AssignTo);
 
             HttpRequestMessage updateRequest1 = new HttpRequestMessage(
                 new HttpMethod("PATCH"), taskUri);
@@ -111,14 +104,14 @@ namespace CRMApiGatewayEndpoint
                 await httpClient.SendAsync(updateRequest1);
             if (updateResponse1.StatusCode == HttpStatusCode.NoContent) //204
             {
-               // var ContactID = updateResponse1.Headers.GetValues("OData-")
+                // var ContactID = updateResponse1.Headers.GetValues("OData-")
                 Console.WriteLine($"Task {TaskId} has been updated");
                 return new Guid();// updateResponse1.Content.Headers.GetValues("regardingobjectid_contact"));
             }
             else
             {
                 //Console.WriteLine("Failed to update contact for reason: {0}",
-                  //  updateResponse1.ReasonPhrase);
+                //  updateResponse1.ReasonPhrase);
                 throw new CrmHttpResponseException(updateResponse1.Content);
             }
 

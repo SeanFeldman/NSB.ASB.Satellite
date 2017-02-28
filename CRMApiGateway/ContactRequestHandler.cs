@@ -13,7 +13,6 @@ namespace CRMApiGatewayEndpoint
 
         public ContactTaskRequestHandler(CRMApiManager apiManager)
         {
-
             this.apiManager = apiManager;
         }
 
@@ -25,7 +24,6 @@ namespace CRMApiGatewayEndpoint
             var newTaskGuid = new Guid(newTaskIdUri.Substring(newTaskIdUri.Length - 36 - 1, 36));
 
            await context.Reply(new CreateCustomerTaskResponse { ContactId=message.ContactId,TaskId = newTaskGuid });
-            
         }
     }
 }
