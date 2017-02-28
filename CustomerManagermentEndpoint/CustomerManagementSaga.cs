@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using NServiceBus;
 using CustomerManagementMessages;
@@ -10,42 +7,41 @@ using FraudManagementMessages;
 
 namespace CustomerManagermentEndpoint
 {
-    public class sagaData : ContainSagaData
+    public class SagaData : ContainSagaData
     {
-       //The customer ID is the correlation between the new customer event and the fraud event.
-        public Guid contactId { get; set; }
-        public NewCustomerReceived newCustomerEvent {get; set;}
-        public FraudReviewResult fraudResult { get; set; }
-        public CreateCustomerTaskResponse taskcreatedResponse { get; set; }
-        public UpdateTaskResponse taskupdatedResponse { get; set; }
+        //The customer ID is the correlation between the new customer event and the fraud event.
+        public Guid ContactId { get; set; }
+        public NewCustomerReceived NewCustomerEvent { get; set; }
+        public FraudReviewResult ReviewResult { get; set; }
+        public CreateCustomerTaskResponse TaskCreatedResponse { get; set; }
+        public UpdateTaskResponse TaskUpdatedResponse { get; set; }
 
     }
 
-    public class CustomerManagementSaga : Saga<sagaData>, IAmStartedByMessages<NewCustomerReceived>, IAmStartedByMessages<FraudReviewResult>,  IHandleMessages<CreateCustomerTaskResponse>, IHandleMessages<UpdateTaskResponse>
+    public class CustomerManagementSaga : Saga<SagaData>, IAmStartedByMessages<NewCustomerReceived>, IAmStartedByMessages<FraudReviewResult>, IHandleMessages<CreateCustomerTaskResponse>, IHandleMessages<UpdateTaskResponse>
     {
-        protected override void ConfigureHowToFindSaga(SagaPropertyMapper<sagaData> mapper)
+        protected override void ConfigureHowToFindSaga(SagaPropertyMapper<SagaData> mapper)
         {
-            mapper.ConfigureMapping<NewCustomerReceived>(m => m.ContactId).ToSaga(s => s.contactId);
-            mapper.ConfigureMapping<FraudReviewResult>(m => m.ContactId).ToSaga(s => s.contactId);
-            mapper.ConfigureMapping<CreateCustomerTaskResponse>(m => m.ContactId).ToSaga(s => s.contactId);
-            mapper.ConfigureMapping<UpdateTaskResponse>(m => m.TaskId).ToSaga(s => s.contactId);
+            mapper.ConfigureMapping<NewCustomerReceived>(m => m.ContactId).ToSaga(s => s.ContactId);
+            mapper.ConfigureMapping<FraudReviewResult>(m => m.ContactId).ToSaga(s => s.ContactId);
+            mapper.ConfigureMapping<CreateCustomerTaskResponse>(m => m.ContactId).ToSaga(s => s.ContactId);
+            mapper.ConfigureMapping<UpdateTaskResponse>(m => m.TaskId).ToSaga(s => s.ContactId);
         }
 
 
         public Task Handle(FraudReviewResult message, IMessageHandlerContext context)
         {
-            Data.fraudResult = message;
-            
+            Data.ReviewResult = message;
             return CheckForTaskUpdate(context);
         }
 
 
         public Task Handle(NewCustomerReceived message, IMessageHandlerContext context)
         {
-            //Save the entire message.  We'll need it. 
-            Data.newCustomerEvent = message;
-            System.Console.WriteLine($"New Customer {message.ContactId} Received. Lastname is {message.LastName}.  Creating a Task due in an hour");
-            var newTaskRequest = new CreateCustomerTaskRequest { ContactId = Data.contactId, Description = "Customer Fraud Review", Subject = "Fraud Review Task", Deadline = DateTimeOffset.Now.AddHours(8) };
+            //Save the entire message.  We'll need it.
+            Data.NewCustomerEvent = message;
+            Console.WriteLine($"New Customer {message.ContactId} Received. Lastname is {message.LastName}.  Creating a Task due in an hour");
+            var newTaskRequest = new CreateCustomerTaskRequest { ContactId = Data.ContactId, Description = "Customer Fraud Review", Subject = "Fraud Review Task", Deadline = DateTimeOffset.Now.AddHours(8) };
 
             return context.Send(newTaskRequest);
 
@@ -54,36 +50,33 @@ namespace CustomerManagermentEndpoint
 
         public Task Handle(CreateCustomerTaskResponse message, IMessageHandlerContext context)
         {
-            Data.taskcreatedResponse = message;
-            System.Console.WriteLine($"Task response received for {message.ContactId}");
+            Data.TaskCreatedResponse = message;
+            Console.WriteLine($"Task response received for {message.ContactId}");
             return CheckForTaskUpdate(context);
         }
 
         public Task Handle(UpdateTaskResponse message, IMessageHandlerContext context)
         {
-            Data.taskupdatedResponse = message;
+            Data.TaskUpdatedResponse = message;
             MarkAsComplete();
             return Task.CompletedTask;
-          }
-
-       
-
+        }
 
         private Task CheckForTaskUpdate(IMessageHandlerContext context)
         {
-            //If we have a response from the Task, we can update it. Can't be certain that the response is back before the fraud event arrives. 
-            if ((Data.taskcreatedResponse != null) && (Data.fraudResult !=null))
+            //If we have a response from the Task, we can update it. Can't be certain that the response is back before the fraud event arrives.
+            if (Data.TaskCreatedResponse != null && Data.ReviewResult != null)
             {
                 UpdateTaskRequest updateTask = new UpdateTaskRequest();
-                updateTask.TaskId = Data.taskcreatedResponse.TaskId;
+                updateTask.TaskId = Data.TaskCreatedResponse.TaskId;
                 updateTask.Subject = "Fraud Review";
-                updateTask.RelatedContactId = Data.contactId;
+                updateTask.RelatedContactId = Data.ContactId;
 
-                System.Console.WriteLine($"Updating the task {updateTask.TaskId}. Mark Complete will be {Data.fraudResult.Success}");
+                Console.WriteLine($"Updating the task {updateTask.TaskId}. Mark Complete will be {Data.ReviewResult.Success}");
 
-                var fraudDetail = Data.fraudResult.ResponseDescription;
+                var fraudDetail = Data.ReviewResult.ResponseDescription;
 
-                if (Data.fraudResult.Success==true)
+                if (Data.ReviewResult.Success)
                 {
                     updateTask.Description = $"Automated Fraud Review Successful. Detail:{fraudDetail}";
                     updateTask.MarkComplete = true;
@@ -93,18 +86,14 @@ namespace CustomerManagermentEndpoint
                 {
                     updateTask.Description = $"Automated Fraud Review Failure.  It's up to you now!. Detail:{fraudDetail}";
                     updateTask.MarkComplete = false;
-                   // updateTask.AssignedToUserId = Data.newCustomerEvent.CreatedById;
+                    // updateTask.AssignedToUserId = Data.NewCustomerEvent.CreatedById;
 
                 }
 
                 return context.Send(updateTask);
             }
-            else
-            {
-                return Task.CompletedTask;
 
-            }
+            return Task.CompletedTask;
         }
-
     }
 }
