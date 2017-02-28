@@ -29,7 +29,7 @@
             string fulladdress = GetCrmValue(message, "address1_composite");
             string emailaddress = GetCrmValue(message, "emailaddress1");
           
-            return context.Send(new Message1
+            return context.Publish(new Message1
             {
                 Property = $"CRM says hello. New Contact is '{fullname}'"
 
