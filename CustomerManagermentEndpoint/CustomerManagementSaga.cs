@@ -25,7 +25,7 @@ namespace CustomerManagermentEndpoint
             mapper.ConfigureMapping<NewCustomerReceived>(m => m.ContactId).ToSaga(s => s.ContactId);
             mapper.ConfigureMapping<FraudReviewResult>(m => m.ContactId).ToSaga(s => s.ContactId);
             mapper.ConfigureMapping<CreateCustomerTaskResponse>(m => m.ContactId).ToSaga(s => s.ContactId);
-            mapper.ConfigureMapping<UpdateTaskResponse>(m => m.TaskId).ToSaga(s => s.TaskCreatedResponse.TaskId);
+            
         }
 
 
@@ -41,7 +41,7 @@ namespace CustomerManagermentEndpoint
             //Save the entire message.  We'll need it.
             Data.NewCustomerEvent = message;
             Console.WriteLine($"New Customer {message.ContactId} Received. Lastname is {message.LastName}.  Creating a Task due in an hour");
-            var newTaskRequest = new CreateCustomerTaskRequest { ContactId = Data.ContactId, Description = "Customer Fraud Review", Subject = "Fraud Review Task", Deadline = DateTimeOffset.Now.AddHours(8) };
+            var newTaskRequest = new CreateCustomerTaskRequest { ContactId = Data.ContactId, Description = "Customer Fraud Review", Subject = "Fraud Review Task", Deadline = DateTimeOffset.Now.AddHours(8),CreatedById=Data.NewCustomerEvent.CreatedById };
 
             return context.Send(newTaskRequest);
 
@@ -70,8 +70,7 @@ namespace CustomerManagermentEndpoint
                 UpdateTaskRequest updateTask = new UpdateTaskRequest();
                 updateTask.TaskId = Data.TaskCreatedResponse.TaskId;
                 updateTask.Subject = "Fraud Review";
-                updateTask.RelatedContactId = Data.ContactId;
-
+                
                 Console.WriteLine($"Updating the task {updateTask.TaskId}. Mark Complete will be {Data.ReviewResult.Success}");
 
                 var fraudDetail = Data.ReviewResult.ResponseDescription;
@@ -84,9 +83,9 @@ namespace CustomerManagermentEndpoint
                 }
                 else
                 {
-                    updateTask.Description = $"Automated Fraud Review Failure.  It's up to you now!. Detail:{fraudDetail}";
+                    updateTask.Description = $"Automated Fraud Review Failure.  It's up to you now. Detail:{fraudDetail}";
                     updateTask.MarkComplete = false;
-                    // updateTask.AssignedToUserId = Data.NewCustomerEvent.CreatedById;
+                    updateTask.AssignedToUserId = Data.NewCustomerEvent.CreatedById;
 
                 }
 

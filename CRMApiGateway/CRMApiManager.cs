@@ -90,7 +90,7 @@
         {
             //Get the URI from the connectionstring and build the proper Customer URI
             Console.WriteLine($"Updating Task {taskId} with Mark complete = {markAsCompleted}");
-            var taskUri = httpClient.BaseAddress.OriginalString + $"tasks({taskId})?$select=regardingobjectid_contact";
+            var taskUri = httpClient.BaseAddress.OriginalString + $"tasks({taskId})";
 
 
             JObject taskAdd = new JObject();
@@ -107,7 +107,7 @@
                 taskAdd.Add("statecode", (int) TaskState.Open);
             }
             taskAdd.Add("description", description);
-            // taskAdd.Add("owninguser", assignTo);
+          //  taskAdd.Add("owninguser", assignTo);
 
             HttpRequestMessage updateRequest1 = new HttpRequestMessage(
                 new HttpMethod("PATCH"), taskUri);
@@ -117,9 +117,9 @@
                 await httpClient.SendAsync(updateRequest1);
             if (updateResponse1.StatusCode == HttpStatusCode.NoContent) //204
             {
-                // var ContactID = updateResponse1.Headers.GetValues("OData-")
+                
                 Console.WriteLine($"Task {taskId} has been updated");
-                return new Guid(); // updateResponse1.Content.Headers.GetValues("regardingobjectid_contact"));
+                return new Guid(); 
             }
 
             //Console.WriteLine("Failed to update contact for reason: {0}",

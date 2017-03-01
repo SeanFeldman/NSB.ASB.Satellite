@@ -33,6 +33,9 @@
             NewCustomer.Address = GetCrmValue(message, "address1_composite");
             NewCustomer.Email = GetCrmValue(message, "emailaddress1");
 
+            log.Info($"Created new customer for Customer {NewCustomer.ContactId}, Lastname {NewCustomer.LastName}, createdby {NewCustomer.CreatedById}");
+
+
             return context.Publish(NewCustomer);
 
 

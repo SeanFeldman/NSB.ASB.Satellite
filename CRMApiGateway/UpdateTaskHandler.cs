@@ -17,11 +17,11 @@
         public async Task Handle(UpdateTaskRequest message, IMessageHandlerContext context)
         {
 
-            Console.WriteLine($"Api manager updated task {message.TaskId}.");
+            Console.WriteLine($"Api manager updated task {message.TaskId} assigning to {message.AssignedToUserId}.");
             var contactId = await apiManager.UpdateTask(message.TaskId,message.MarkComplete,message.AssignedToUserId,message.Description).ConfigureAwait(false);
 
-            contactId = message.RelatedContactId;
-            await context.Reply(new UpdateTaskResponse { ContactId = contactId, TaskId = message.TaskId, Message = "", Success = true }).ConfigureAwait(false);
+          
+            await context.Reply(new UpdateTaskResponse { TaskId = message.TaskId,  Success = true }).ConfigureAwait(false);
         }
     }
 }

@@ -45,15 +45,13 @@ namespace CustomerManagementMessages
         public string Description { get; set; }
         public bool MarkComplete { get; set; }
         public Guid AssignedToUserId { get; set; }
-       public Guid RelatedContactId { get; set; }
-        
+       
     }
     public class UpdateTaskResponse : IMessage
     {
         public Guid TaskId { get; set; }
-        public Guid ContactId { get; set; }
         public bool Success { get; set; }
-        public string Message { get; set; }
+       
        
       }
 
