@@ -1,4 +1,9 @@
-﻿namespace CRMAdapterEndpoint
+﻿using System.IO;
+using System.Runtime.Serialization.Json;
+using System.Text;
+using Microsoft.Xrm.Sdk;
+
+namespace CRMAdapterEndpoint
 {
     using System;
     using System.Threading.Tasks;
@@ -36,7 +41,11 @@
             if (!context.Message.Headers.ContainsKey("NServiceBus.EnclosedMessageTypes"))
             {
                 context.Message.Headers[Headers.EnclosedMessageTypes] = typeof(CrmMessage).AssemblyQualifiedName;
-                //context.Message.Headers[Headers.EnclosedMessageTypes] = typeof(Microsoft.Xrm.Sdk.RemoteExecutionContext).AssemblyQualifiedName;
+
+                // Deserialize CRM message into RemoteExecutionContext
+
+                var stream = new MemoryStream(context.Message.Body);
+                var remoteExecutionContext = new DataContractJsonSerializer(typeof(RemoteExecutionContext)).ReadObject(stream);
             }
             return next();
         }
