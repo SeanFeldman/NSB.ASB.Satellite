@@ -23,10 +23,10 @@ namespace CustomerManagermentEndpoint
             endpointConfiguration.UseSerialization<JsonSerializer>();
             endpointConfiguration.EnableInstallers();
             var transport = endpointConfiguration.UseTransport<AzureServiceBusTransport>();
-            var connectionString = Environment.GetEnvironmentVariable("AzureServiceBus.ConnectionString");
+            var connectionString = Environment.GetEnvironmentVariable("CRM.AzureServiceBus.ConnectionString");
             if (string.IsNullOrWhiteSpace(connectionString))
             {
-                throw new Exception("Could not read the 'AzureServiceBus.ConnectionString' environment variable. Check the sample prerequisites.");
+                throw new Exception("Could not read the 'CRM.AzureServiceBus.ConnectionString' environment variable. Check the sample prerequisites.");
             }
             transport.ConnectionString(connectionString);
             transport.UseForwardingTopology();
