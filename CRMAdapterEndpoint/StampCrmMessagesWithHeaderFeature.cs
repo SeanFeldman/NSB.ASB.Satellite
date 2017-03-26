@@ -1,10 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.IO;
-using System.Runtime.Serialization.Json;
-using System.Text;
+using CRMAdapterEndpoint.Messages;
 using CRMMapping;
-using Microsoft.Xrm.Sdk;
-using Newtonsoft.Json;
 using NServiceBus.Unicast.Messages;
 
 namespace CRMAdapterEndpoint
@@ -14,7 +10,6 @@ namespace CRMAdapterEndpoint
     using NServiceBus;
     using NServiceBus.Features;
     using NServiceBus.Pipeline;
-    using CRMAdapterEndpoint.Messages;
 
     public class StampCrmMessagesWithHeaderFeature : Feature
     {
@@ -56,31 +51,12 @@ namespace CRMAdapterEndpoint
             if (!context.Message.Headers.ContainsKey("NServiceBus.EnclosedMessageTypes"))
             {
                 var mappingResult = Mapper.Map(context.Message.Body);
-
-                // all the work will be done in the mappesr
-
+               
                 context.Message.Headers[Headers.EnclosedMessageTypes] = typeof(CrmMessage).AssemblyQualifiedName;
 
-                // Deserialize CRM message into RemoteExecutionContext
-                var stream = new MemoryStream(context.Message.Body);
-                var remoteExecutionContext = (RemoteExecutionContext)new DataContractJsonSerializer(typeof(RemoteExecutionContext)).ReadObject(stream);
-
-                // map it to a known NSB type
-                //                var createContact = new CrmCreateContact();
-                //                var parameter = remoteExecutionContext.InputParameters.First();
-                //                var parameterValue = (Value)parameter.Value;
-                //                var fullName = parameterValue.Attributes.FirstOrDefault(attribute => attribute.key == "fullname");
-                //                createContact.FullName = (string)fullName.value;
-
-                // serialize the message
-                //                var serializedObject = JsonConvert.SerializeObject(createContact);
-                //                var bytes = Encoding.UTF8.GetBytes(serializedObject);
-
-                // update the body of the incoming message
-                //                context.UpdateMessage(bytes);
-
-                // set the incoming message type header for NSB
-                //                 context.Message.Headers[Headers.EnclosedMessageTypes] = typeof(CrmCreateContact).AssemblyQualifiedName
+                // this will replace the header update above
+//                context.Message.Headers[Headers.EnclosedMessageTypes] = mappingResult.TypeHeaderValue;
+//                context.UpdateMessage(mappingResult.SerializedMessageBody);
             }
             return next();
         }
