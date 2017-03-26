@@ -2,6 +2,7 @@
 using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Text;
+using CRMMapping;
 using Microsoft.Xrm.Sdk;
 using Newtonsoft.Json;
 using NServiceBus.Unicast.Messages;
@@ -54,6 +55,10 @@ namespace CRMAdapterEndpoint
             //Quick check to see if this is a native message.  We don't want to alter the type otherwise.
             if (!context.Message.Headers.ContainsKey("NServiceBus.EnclosedMessageTypes"))
             {
+                var mappingResult = Mapper.Map(context.Message.Body);
+
+                // all the work will be done in the mappesr
+
                 context.Message.Headers[Headers.EnclosedMessageTypes] = typeof(CrmMessage).AssemblyQualifiedName;
 
                 // Deserialize CRM message into RemoteExecutionContext
