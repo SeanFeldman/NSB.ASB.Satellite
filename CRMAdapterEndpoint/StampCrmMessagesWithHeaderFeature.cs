@@ -50,7 +50,7 @@ namespace CRMAdapterEndpoint
             //Quick check to see if this is a native message.  We don't want to alter the type otherwise.
             if (!context.Message.Headers.ContainsKey("NServiceBus.EnclosedMessageTypes"))
             {
-                var mappingResult = Mapper.Map(context.Message.Body);
+                var mappingResult = Mapper.Map(context.Message.Headers, context.Message.Body);
                
                 context.Message.Headers[Headers.EnclosedMessageTypes] = typeof(CrmMessage).AssemblyQualifiedName;
 

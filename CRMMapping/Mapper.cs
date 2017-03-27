@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Runtime.Serialization.Json;
 using CRMMapping.Messages;
 using Microsoft.Xrm.Sdk;
@@ -8,7 +9,7 @@ namespace CRMMapping
 {
     public static class Mapper
     {
-        public static MappingResult Map(byte[] crmRawMessage)
+        public static MappingResult Map(Dictionary<string, string> messageHeaders, byte[] crmRawMessage)
         {
             // Deserialize CRM message into RemoteExecutionContext
             var stream = new MemoryStream(crmRawMessage);
