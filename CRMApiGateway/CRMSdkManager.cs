@@ -27,7 +27,6 @@ namespace CRMApiGateway
             task["scheduledend"] = deadline;
             task["statecode"] = (int)CRMApiManager.TaskState.Open;
             task["statuscode"] = (int)CRMApiManager.TaskStatus.InProgress;
-
             serviceclient.Create(task);
 
             return task.Id.ToString();
