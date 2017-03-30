@@ -4,6 +4,10 @@ using System.Runtime.Serialization.Json;
 using CRMMapping.Messages;
 using Microsoft.Xrm.Sdk;
 using NServiceBus;
+using System.Globalization;
+using System.Threading;
+using System.Reflection;
+using Newtonsoft.Json;
 
 namespace CRMMapping
 {
@@ -15,24 +19,38 @@ namespace CRMMapping
             var stream = new MemoryStream(crmRawMessage);
             var remoteExecutionContext = (RemoteExecutionContext)new DataContractJsonSerializer(typeof(RemoteExecutionContext)).ReadObject(stream);
 
-            // map it to a known NSB type
-            //                var createContact = new CrmCreateContact();
-            //                var parameter = remoteExecutionContext.InputParameters.First();
-            //                var parameterValue = (Value)parameter.Value;
-            //                var fullName = parameterValue.Attributes.FirstOrDefault(attribute => attribute.key == "fullname");
-            //                createContact.FullName = (string)fullName.value;
+            //Get the Entity and Action from the header in the raw CRM message from Azure. 
+            var entityName = messageHeaders["http://schemas.microsoft.com/xrm/2011/Claims/EntityLogicalName"];
+            var entityAction = messageHeaders["http://schemas.microsoft.com/xrm/2011/Claims/RequestName"];
+
+            var mapperTypeName =  entityName.ToLower() + entityAction.ToLower();  //"CRMMapping.Messages."+
+
+            IMessage targetMessage = null;
+
+            switch (mapperTypeName)
+            {
+                case "contactcreate":
+                    //The mapping will be done in the constructor
+                    targetMessage = new ContactCreate(remoteExecutionContext);
+
+                    break;
+
+                case "contactupdate":
+
+                    break;
+
+                default:
+                    //I'll throw some map not found exception and configure it to not be retried. 
+                    break;
+            }
 
             // serialize the message
-            //                var serializedObject = JsonConvert.SerializeObject(createContact);
-            //                var bytes = Encoding.UTF8.GetBytes(serializedObject);
 
-            // update the body of the incoming message
-            //                context.UpdateMessage(bytes);
+            var serializedObject = JsonConvert.SerializeObject(targetMessage);
+            var bytes = System.Text.Encoding.UTF8.GetBytes(serializedObject);
 
-            // set the incoming message type header for NSB
-            //                 context.Message.Headers[Headers.EnclosedMessageTypes] = typeof(CrmCreateContact).AssemblyQualifiedName
-
-            return new MappingResult(new byte[0], typeof(CrmCustomerCreated).AssemblyQualifiedName);
+            
+            return new MappingResult(bytes, targetMessage.GetType().FullName);
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using CRMAdapterEndpoint.Messages;
+//using CRMAdapterEndpoint.Messages;
 using CRMMapping;
 using NServiceBus.Unicast.Messages;
 
@@ -50,13 +50,12 @@ namespace CRMAdapterEndpoint
             //Quick check to see if this is a native message.  We don't want to alter the type otherwise.
             if (!context.Message.Headers.ContainsKey("NServiceBus.EnclosedMessageTypes"))
             {
+                //Call into the mapper so we can get the message we really want. 
                 var mappingResult = Mapper.Map(context.Message.Headers, context.Message.Body);
                
-                context.Message.Headers[Headers.EnclosedMessageTypes] = typeof(CrmMessage).AssemblyQualifiedName;
-
                 // this will replace the header update above
-//                context.Message.Headers[Headers.EnclosedMessageTypes] = mappingResult.TypeHeaderValue;
-//                context.UpdateMessage(mappingResult.SerializedMessageBody);
+                context.Message.Headers[Headers.EnclosedMessageTypes] = mappingResult.TypeHeaderValue;
+                context.UpdateMessage(mappingResult.SerializedMessageBody);
             }
             return next();
         }

@@ -22,7 +22,7 @@ namespace CRMAdapterEndpoint
 
         static async Task MainAsync()
         {
-            Console.Title = "Multi-Host CRMAdapterEndpoint Host";
+            Console.Title = "CRMAdapterEndpoint Host";
 
             var nativeEndpointConfiguration = new EndpointConfiguration("Samples.ServiceBus.CRMAdapterEndpoint");
             //In dynamics the events are configured to go to CRMEvents queue.
