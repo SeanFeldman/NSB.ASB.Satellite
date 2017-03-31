@@ -8,9 +8,9 @@
     using CustomerManagementMessages;
     using CRMMapping.Messages;
 
-    public class CrmMessageHandler : IHandleMessages<ContactCreate>
+    public class ContactCreateHandler : IHandleMessages<ContactCreate>
     {
-        static ILog log = LogManager.GetLogger<CrmMessageHandler>();
+        static ILog log = LogManager.GetLogger<ContactCreateHandler>();
 
         public Task Handle(ContactCreate message, IMessageHandlerContext context)
         {

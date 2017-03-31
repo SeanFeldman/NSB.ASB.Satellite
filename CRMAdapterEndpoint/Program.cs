@@ -4,6 +4,7 @@ using NServiceBus;
 using NServiceBus.Transport.AzureServiceBus;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
+using CRMMapping;
 
 
 namespace CRMAdapterEndpoint
@@ -42,7 +43,10 @@ namespace CRMAdapterEndpoint
             nativeEndpointConfiguration.UseSerialization<JsonSerializer>();
             nativeEndpointConfiguration.EnableInstallers();
 
-            nativeEndpointConfiguration.Recoverability().DisableLegacyRetriesSatellite();
+            var recoverability = nativeEndpointConfiguration.Recoverability();
+            recoverability.DisableLegacyRetriesSatellite();
+            recoverability.AddUnrecoverableException<MapperNotFoundException>();
+            
 
             var nativeEndpointInstance = await Endpoint.Start(nativeEndpointConfiguration)
                 .ConfigureAwait(false);

@@ -36,12 +36,13 @@ namespace CRMMapping
                     break;
 
                 case "contactupdate":
-
+                    targetMessage = new ContactUpdate(remoteExecutionContext);
                     break;
 
                 default:
-                    //I'll throw some map not found exception and configure it to not be retried. 
-                    break;
+                    //if we don't have a mapper, throw this exception.  It is configured as non-recoverable in the adapter endpoint and won't trigger retry.
+                    throw new MapperNotFoundException($"A mapping class is not configured for the entity {entityName} and action {entityAction}.");
+                   
             }
 
             // serialize the message

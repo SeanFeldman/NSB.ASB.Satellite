@@ -2,10 +2,9 @@
 using NServiceBus;
 using Microsoft.Xrm.Sdk;
 using CRMMapping.CustomExtensions;
-
 namespace CRMMapping.Messages
 {
-    public class ContactCreate : IMessage
+    public class ContactUpdate : IMessage
     {
         public Guid ContactId { get; set; }
 
@@ -24,7 +23,7 @@ namespace CRMMapping.Messages
         public string Email { get; set; }
 
 
-        public ContactCreate(RemoteExecutionContext context)
+        public ContactUpdate(RemoteExecutionContext context)
         {
 
             ContactId = context.PrimaryEntityId;
@@ -41,6 +40,5 @@ namespace CRMMapping.Messages
             Email = this.GetCrmValue(entity, "emailaddress1");
         }
 
-      
     }
 }
