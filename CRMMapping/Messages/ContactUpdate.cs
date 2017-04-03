@@ -1,9 +1,9 @@
-﻿using System;
-using NServiceBus;
-using Microsoft.Xrm.Sdk;
-using CRMMapping.CustomExtensions;
-namespace CRMMapping.Messages
+﻿namespace CRMMapping.Messages
 {
+    using System;
+    using NServiceBus;
+    using Microsoft.Xrm.Sdk;
+
     public class ContactUpdate : IMessage
     {
         public Guid ContactId { get; set; }
@@ -25,7 +25,6 @@ namespace CRMMapping.Messages
 
         public ContactUpdate(RemoteExecutionContext context)
         {
-
             ContactId = context.PrimaryEntityId;
             CreatedById = context.InitiatingUserId;
             CreateDate = context.OperationCreatedOn;
@@ -33,11 +32,11 @@ namespace CRMMapping.Messages
             //We can cast the 'Target' to a late bound CRM Entity type to parse it a bit easier.
             Entity entity = (Entity) context.InputParameters["Target"];
 
-            FullName = this.GetCrmValue(entity,"fullname");
-            FirstName = this.GetCrmValue(entity, "firstname");
-            LastName = this.GetCrmValue(entity, "lastname");
-            Address = this.GetCrmValue(entity, "address1_composite");
-            Email = this.GetCrmValue(entity, "emailaddress1");
+            FullName = entity.GetCrmValue("fullname");
+            FirstName = entity.GetCrmValue("firstname");
+            LastName = entity.GetCrmValue("lastname");
+            Address = entity.GetCrmValue("address1_composite");
+            Email = entity.GetCrmValue("emailaddress1");
         }
 
     }

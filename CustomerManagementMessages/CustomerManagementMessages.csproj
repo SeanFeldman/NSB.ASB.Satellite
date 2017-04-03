@@ -45,8 +45,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CreateCustomerTaskRequest.cs" />
+    <Compile Include="CreateCustomerTaskResponse.cs" />
     <Compile Include="CustomerManagementMessage.cs" />
+    <Compile Include="NewCustomerReceived.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UpdateTaskRequest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

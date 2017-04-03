@@ -3,11 +3,10 @@
     using System;
     using NServiceBus;
 
-    public class UpdateTaskResponse : IMessage
+    public class CreateCustomerTaskResponse : IMessage
     {
+        public Guid ContactId { get; set; }
         public Guid TaskId { get; set; }
-        public bool Success { get; set; }
+
     }
 }
-
-

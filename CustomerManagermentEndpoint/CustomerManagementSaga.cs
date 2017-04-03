@@ -7,20 +7,9 @@ using FraudManagementMessages;
 
 namespace CustomerManagermentEndpoint
 {
-    public class SagaData : ContainSagaData
+    public class CustomerManagementSaga : Saga<CustomerManagementSagaData>, IAmStartedByMessages<NewCustomerReceived>, IAmStartedByMessages<FraudReviewResult>, IHandleMessages<CreateCustomerTaskResponse>, IHandleMessages<UpdateTaskResponse>
     {
-        //The customer ID is the correlation between the new customer event and the fraud event.
-        public Guid ContactId { get; set; }
-        public NewCustomerReceived NewCustomerEvent { get; set; }
-        public FraudReviewResult ReviewResult { get; set; }
-        public CreateCustomerTaskResponse TaskCreatedResponse { get; set; }
-        public UpdateTaskResponse TaskUpdatedResponse { get; set; }
-
-    }
-
-    public class CustomerManagementSaga : Saga<SagaData>, IAmStartedByMessages<NewCustomerReceived>, IAmStartedByMessages<FraudReviewResult>, IHandleMessages<CreateCustomerTaskResponse>, IHandleMessages<UpdateTaskResponse>
-    {
-        protected override void ConfigureHowToFindSaga(SagaPropertyMapper<SagaData> mapper)
+        protected override void ConfigureHowToFindSaga(SagaPropertyMapper<CustomerManagementSagaData> mapper)
         {
             mapper.ConfigureMapping<NewCustomerReceived>(m => m.ContactId).ToSaga(s => s.ContactId);
             mapper.ConfigureMapping<FraudReviewResult>(m => m.ContactId).ToSaga(s => s.ContactId);

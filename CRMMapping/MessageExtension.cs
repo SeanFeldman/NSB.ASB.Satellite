@@ -1,32 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xrm.Sdk;
-using NServiceBus;
+﻿using Microsoft.Xrm.Sdk;
 
-namespace CRMMapping.CustomExtensions
+namespace CRMMapping.Messages
 {
     public static class CrMMessageExtension
     {
-
-        public static string GetCrmValue(this IMessage message, Entity entity, string key)
+        /// <summary>Return string value for a CRM entity attribute.</summary>
+        /// <param name="entity"></param>
+        /// <param name="key">CRM entity attribute</param>
+        public static string GetCrmValue(this Entity entity, string key)
         {
-            
             if (entity.Contains(key))
             {
                 return entity[key].ToString();
             }
-            else
-            {
 
-                return string.Empty;
-            }
-
-            
+            return string.Empty;
         }
-
-
     }
 }

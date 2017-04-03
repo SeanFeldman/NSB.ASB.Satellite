@@ -3,8 +3,6 @@
     using System.Threading.Tasks;
     using NServiceBus;
     using NServiceBus.Logging;
-    using System;
-    //using CRMAdapterEndpoint.Messages;
     using CustomerManagementMessages;
     using CRMMapping.Messages;
 
@@ -16,25 +14,19 @@
         {
             log.Info($"Received CRM message id: {context.MessageId} (contact: {message.FullName})");
 
-            //Messagename should be 'create'
-            var NewCustomer = new NewCustomerReceived();
+            var newCustomer = new NewCustomerReceived();
+            newCustomer.ContactId = message.ContactId;
+            newCustomer.CreatedById = message.CreatedById;
+            newCustomer.CreateDate = message.CreateDate;
+            newCustomer.FullName = message.FullName;
+            newCustomer.FirstName = message.FirstName;
+            newCustomer.LastName = message.LastName;
+            newCustomer.Address = message.Address;
+            newCustomer.Email = message.Email;
 
-            NewCustomer.ContactId = message.ContactId;
-            NewCustomer.CreatedById = message.CreatedById;
-            DateTime createddate = message.CreateDate;
-            NewCustomer.FullName = message.FullName;
-            NewCustomer.FirstName = message.FirstName;
-            NewCustomer.LastName = message.LastName;
-            NewCustomer.Address = message.Address;
-            NewCustomer.Email = message.Email;
+            log.Info($"Created new customer for Customer {newCustomer.ContactId}, Lastname {newCustomer.LastName}, createdby {newCustomer.CreatedById}");
 
-            log.Info($"Created new customer for Customer {NewCustomer.ContactId}, Lastname {NewCustomer.LastName}, createdby {NewCustomer.CreatedById}");
-
-
-            return context.Publish(NewCustomer);
-
-
+            return context.Publish(newCustomer);
         }
-
-           }
+    }
 }

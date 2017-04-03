@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-//using CRMAdapterEndpoint.Messages;
-using CRMMapping;
-using NServiceBus.Unicast.Messages;
+﻿using CRMMapping;
 
 namespace CRMAdapterEndpoint
 {
@@ -23,17 +20,6 @@ namespace CRMAdapterEndpoint
             var pipeline = context.Pipeline;
             pipeline.Register<StampCrmMessagesWithHeaderRegistration>();
         }
-
-        static string SerializeEnclosedMessageTypes(MessageMetadata metadata)
-        {
-            var assemblyQualifiedNames = new HashSet<string>();
-            foreach (var type in metadata.MessageHierarchy)
-            {
-                assemblyQualifiedNames.Add(type.AssemblyQualifiedName);
-            }
-
-            return string.Join(";", assemblyQualifiedNames);
-        }
     }
 
     public class StampCrmMessagesWithHeaderRegistration : RegisterStep
@@ -47,22 +33,15 @@ namespace CRMAdapterEndpoint
     {
         public override Task Invoke(IIncomingPhysicalMessageContext context, Func<Task> next)
         {
-            //Quick check to see if this is a native message.  We don't want to alter the type otherwise.
+            // TODO: verify if needed (Quick check to see if this is a native message.  We don't want to alter the type otherwise.)
             if (!context.Message.Headers.ContainsKey("NServiceBus.EnclosedMessageTypes"))
             {
-                //Call into the mapper so we can get the message we really want. 
                 var mappingResult = Mapper.Map(context.Message.Headers, context.Message.Body);
                
-                // this will replace the header update above
                 context.Message.Headers[Headers.EnclosedMessageTypes] = mappingResult.TypeHeaderValue;
                 context.UpdateMessage(mappingResult.SerializedMessageBody);
             }
             return next();
         }
-    }
-
-    public class CrmCreateContact : IMessage
-    {
-        public string FullName { get; set; }
     }
 }

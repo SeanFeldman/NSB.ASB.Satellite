@@ -3,9 +3,6 @@
     using System.Threading.Tasks;
     using NServiceBus;
     using NServiceBus.Logging;
-    using System;
-    //using CRMAdapterEndpoint.Messages;
-    using CustomerManagementMessages;
     using CRMMapping.Messages;
 
     public class ContactUpdateHandler : IHandleMessages<ContactUpdate>
@@ -16,10 +13,8 @@
         {
             log.Info($"Received CRM ContactUpdate message id: {context.MessageId} (contact: {message.FullName})");
             System.Console.WriteLine($"Received CRM ContactUpdate message id: {context.MessageId} (contact: {message.FullName})");
+
             return Task.CompletedTask;
-           
-
         }
-
-           }
+    }
 }
