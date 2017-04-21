@@ -107,7 +107,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CRMApiManager.cs" />
-    <Compile Include="CRMSdkManager.cs" />
     <Compile Include="ContactRequestHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

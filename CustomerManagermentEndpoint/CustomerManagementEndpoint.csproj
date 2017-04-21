@@ -7,8 +7,8 @@
     <ProjectGuid>{62A79142-B429-4B8B-9E98-57F0D8B2ECBB}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CustomerManagermentEndpoint</RootNamespace>
-    <AssemblyName>CustomerManagermentEndpoint</AssemblyName>
+    <RootNamespace>CustomerManagementEndpoint</RootNamespace>
+    <AssemblyName>CustomerManagementEndpoint</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

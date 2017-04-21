@@ -56,7 +56,6 @@ namespace CRMAdapterEndpoint
 
             try
             {
-                Console.WriteLine("Press 'enter' to send a message");
                 Console.WriteLine("Press any other key to exit");
 
                 while (true)
