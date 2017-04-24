@@ -24,7 +24,7 @@ namespace CRMAdapterEndpoint
 
     public class StampCrmMessagesWithHeaderRegistration : RegisterStep
     {
-        public StampCrmMessagesWithHeaderRegistration() : base("StampCrmMessagesWithHeader", typeof(StampCrmMessagesWithHeaderBehavior), "Stamp incoming CRM messages with NSB header to allow processing in a handler")
+        public StampCrmMessagesWithHeaderRegistration() : base("StampCrmMessagesWithHeader", typeof(StampCrmMessagesWithHeaderBehavior), "Convert incoming CRM messages into NServiceBus messages (body & header) to allow processing in handlers.")
         {
         }
     }
