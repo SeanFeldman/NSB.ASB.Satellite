@@ -27,8 +27,9 @@ namespace CRMApiGatewayEndpoint
                 throw new Exception("Could not read the 'CRM.AzureServiceBus.ConnectionString' environment variable. Check the sample prerequisites.");
             }
             transport.ConnectionString(connectionString);
-            transport.UseForwardingTopology();
             transport.BrokeredMessageBodyType(SupportedBrokeredMessageBodyTypes.Stream);
+            var topology = transport.UseForwardingTopology();
+            topology.NumberOfEntitiesInBundle(1);
             endpointConfiguration.UsePersistence<InMemoryPersistence>();
             endpointConfiguration.Recoverability().DisableLegacyRetriesSatellite();
 
