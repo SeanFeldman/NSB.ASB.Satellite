@@ -1,8 +1,8 @@
-﻿using System;
-using NServiceBus;
-
-namespace FraudManagementMessages
+﻿namespace FraudManagementMessages
 {
+    using System;
+    using NServiceBus;
+
     public class FraudReviewResult:IEvent
     {
         public Guid ContactId { get; set; }

@@ -1,12 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using NServiceBus;
-using NServiceBus.Transports;
-using NServiceBus.Transport.AzureServiceBus;
-using CustomerManagementMessages;
-
-namespace CustomerManagermentEndpoint
+﻿namespace CustomerManagermentEndpoint
 {
+    using System;
+    using System.Threading.Tasks;
+    using NServiceBus;
+    using NServiceBus.Transport.AzureServiceBus;
+    using CustomerManagementMessages;
+
     class Program
     {
         static void Main(string[] args)
@@ -16,7 +15,7 @@ namespace CustomerManagermentEndpoint
 
         static async Task MainAsync()
         {
-            System.Console.Title = "Customer Management";
+            Console.Title = "Customer Management";
 
             var endpointConfiguration = new EndpointConfiguration("Samples.ServiceBus.CustomerManagementEndpoint");
             endpointConfiguration.SendFailedMessagesTo("error");
@@ -37,12 +36,12 @@ namespace CustomerManagermentEndpoint
 
             //Setup routing for our command;
             transport.Routing().RouteToEndpoint(
-            messageType: typeof(CreateCustomerTaskRequest),
-            destination: "Samples.ServiceBus.CRMAPIGatewayEndpoint");
+                messageType: typeof(CreateCustomerTaskRequest),
+                destination: "Samples.ServiceBus.CRMAPIGatewayEndpoint");
 
             transport.Routing().RouteToEndpoint(
-            messageType: typeof(UpdateTaskRequest),
-            destination: "Samples.ServiceBus.CRMAPIGatewayEndpoint");
+                messageType: typeof(UpdateTaskRequest),
+                destination: "Samples.ServiceBus.CRMAPIGatewayEndpoint");
 
 
             var endpointInstance = await Endpoint.Start(endpointConfiguration)

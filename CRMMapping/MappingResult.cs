@@ -8,7 +8,7 @@
             TypeHeaderValue = typeHeaderValue;
         }
 
-        public byte[] SerializedMessageBody { get; set; }
-        public string TypeHeaderValue { get; set; }
+        public byte[] SerializedMessageBody { get; }
+        public string TypeHeaderValue { get; }
     }
 }

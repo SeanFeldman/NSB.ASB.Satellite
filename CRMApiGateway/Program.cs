@@ -1,10 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using NServiceBus;
-using NServiceBus.Transport.AzureServiceBus;
-
-namespace CRMApiGatewayEndpoint
+﻿namespace CRMApiGatewayEndpoint
 {
+    using System;
+    using System.Threading.Tasks;
+    using NServiceBus;
+    using NServiceBus.Transport.AzureServiceBus;
+
     class Program
     {
         static void Main(string[] args)
@@ -14,7 +14,7 @@ namespace CRMApiGatewayEndpoint
 
         static async Task MainAsync()
         {
-            System.Console.Title = "CRM API Gateway Endpoint";
+            Console.Title = "CRM API Gateway Endpoint";
 
             var endpointConfiguration = new EndpointConfiguration("Samples.ServiceBus.CRMAPIGatewayEndpoint");
             endpointConfiguration.SendFailedMessagesTo("error");
@@ -34,19 +34,11 @@ namespace CRMApiGatewayEndpoint
             endpointConfiguration.Recoverability().DisableLegacyRetriesSatellite();
 
             //Inject the helper class for calling the API
-            endpointConfiguration.RegisterComponents(cc => cc.ConfigureComponent(b =>
-            {
-                  return new CRMApiManager();
-            },
-          
-            DependencyLifecycle.SingleInstance));
-
-
-
+            endpointConfiguration.RegisterComponents(cc => cc.ConfigureComponent(b => new CRMApiManager(), DependencyLifecycle.SingleInstance));
+            
             var endpointInstance = await Endpoint.Start(endpointConfiguration)
-            .ConfigureAwait(false);
-
-          
+                .ConfigureAwait(false);
+            
             try
             {
                 Console.WriteLine("Press any key to exit");

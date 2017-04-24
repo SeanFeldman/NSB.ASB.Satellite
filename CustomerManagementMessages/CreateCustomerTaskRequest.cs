@@ -10,6 +10,5 @@ namespace CustomerManagementMessages
         public string Subject { get; set; }
         public string Description { get; set; }
         public DateTimeOffset Deadline { get; set; }
-
     }
 }

@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Runtime.Serialization.Json;
-using CRMMapping.Messages;
-using Microsoft.Xrm.Sdk;
-using NServiceBus;
-using Newtonsoft.Json;
-
-namespace CRMMapping
+﻿namespace CRMMapping
 {
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Runtime.Serialization.Json;
+    using CRMMapping.Messages;
+    using Microsoft.Xrm.Sdk;
+    using NServiceBus;
+    using Newtonsoft.Json;
+
     /// <summary>Map CRM entity name and action to the corresponding NServiceBus message</summary>
     public static class Mapper
     {
@@ -38,7 +38,6 @@ namespace CRMMapping
                 default:
                     //if we don't have a mapper, throw this exception.  It is configured as non-recoverable in the adapter endpoint and won't trigger retry.
                     throw new MapperNotFoundException($"A mapping class is not configured for the entity {entityName} and action {entityAction}.");
-
             }
 
             // serialize the message

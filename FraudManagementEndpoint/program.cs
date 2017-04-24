@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NServiceBus;
-using NServiceBus.Transport.AzureServiceBus;
-
-namespace FraudManagementEndpoint
+﻿namespace FraudManagementEndpoint
 {
+    using System;
+    using System.Threading.Tasks;
+    using NServiceBus;
+    using NServiceBus.Transport.AzureServiceBus;
+
     public class Program
     {
 
@@ -18,7 +15,7 @@ namespace FraudManagementEndpoint
 
         static async Task MainAsync()
         {
-            System.Console.Title = "Fraud Management";
+            Console.Title = "Fraud Management";
 
             var endpointConfiguration = new EndpointConfiguration("Samples.ServiceBus.FraudManagementEndpoint");
             endpointConfiguration.SendFailedMessagesTo("error");
@@ -36,10 +33,9 @@ namespace FraudManagementEndpoint
             topology.NumberOfEntitiesInBundle(1);
             endpointConfiguration.UsePersistence<InMemoryPersistence>();
             endpointConfiguration.Recoverability().DisableLegacyRetriesSatellite();
-                       
-            var endpointInstance = await Endpoint.Start(endpointConfiguration)
-            .ConfigureAwait(false);
 
+            var endpointInstance = await Endpoint.Start(endpointConfiguration)
+                .ConfigureAwait(false);
 
             try
             {

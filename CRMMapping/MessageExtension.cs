@@ -1,7 +1,7 @@
-﻿using Microsoft.Xrm.Sdk;
-
-namespace CRMMapping.Messages
+﻿namespace CRMMapping.Messages
 {
+    using Microsoft.Xrm.Sdk;
+
     public static class CrMMessageExtension
     {
         /// <summary>Return string value for a CRM entity attribute.</summary>

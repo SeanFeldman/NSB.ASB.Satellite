@@ -1,5 +1,6 @@
 ﻿namespace CRMAdapterEndpoint
 {
+    using System;
     using System.Threading.Tasks;
     using NServiceBus;
     using NServiceBus.Logging;
@@ -12,7 +13,7 @@
         public Task Handle(ContactUpdate message, IMessageHandlerContext context)
         {
             log.Info($"Received CRM ContactUpdate message id: {context.MessageId} (contact: {message.FullName})");
-            System.Console.WriteLine($"Received CRM ContactUpdate message id: {context.MessageId} (contact: {message.FullName})");
+            Console.WriteLine($"Received CRM ContactUpdate message id: {context.MessageId} (contact: {message.FullName})");
 
             return Task.CompletedTask;
         }

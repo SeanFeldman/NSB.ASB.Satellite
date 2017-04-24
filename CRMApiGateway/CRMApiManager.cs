@@ -33,44 +33,38 @@
         }
 
 
-        public async Task<string> CreateTaskForContact(Guid ContactID, string Subject, string Description,
-            DateTimeOffset Deadline)
+        public async Task<string> CreateTaskForContact(Guid contactId, string subject, string description, DateTimeOffset deadline)
         {
-            string newtaskuri;
-
             //Get the URI from the connectionstring and build the proper Customer URI
             //var connection = System.Configuration.ConfigurationManager.ConnectionStrings["default"].ConnectionString;
             // var connection = System.Environment.GetEnvironmentVariable("Dynamics365API.ConnectionString");
-            //var crmcontactURI = connection.Substring(connection.IndexOf('=') + 1, (connection.IndexOf(';')) - (connection.IndexOf('=') + 1)) + $"api/data/v8.1/contacts({ContactID})" ;
+            //var crmcontactURI = connection.Substring(connection.IndexOf('=') + 1, (connection.IndexOf(';')) - (connection.IndexOf('=') + 1)) + $"api/data/v8.1/contacts({contactId})" ;
 
-            var crmcontactURI = httpClient.BaseAddress.OriginalString + $"contacts({ContactID})";
-            JObject task = new JObject();
-            task.Add("subject", Subject);
-            task.Add("description", Description);
-            task.Add("scheduledend", Deadline);
-            task.Add("statecode", 0);
-            task.Add("statuscode", 3);
-            task.Add("regardingobjectid_contact@odata.bind", crmcontactURI);
+            var crmcontactUri = httpClient.BaseAddress.OriginalString + $"contacts({contactId})";
+            var task = new JObject
+            {
+                {"subject", subject},
+                {"description", description},
+                {"scheduledend", deadline},
+                {"statecode", 0},
+                {"statuscode", 3},
+                {"regardingobjectid_contact@odata.bind", crmcontactUri}
+            };
 
-            HttpRequestMessage createRequest =
-                new HttpRequestMessage(HttpMethod.Post, "tasks");
-            createRequest.Content = new StringContent(task.ToString(),
-                Encoding.UTF8, "application/json");
-            HttpResponseMessage createResponse =
-                await httpClient.SendAsync(createRequest);
+            HttpRequestMessage createRequest = new HttpRequestMessage(HttpMethod.Post, "tasks");
+            createRequest.Content = new StringContent(task.ToString(), Encoding.UTF8, "application/json");
+            HttpResponseMessage createResponse = await httpClient.SendAsync(createRequest);
             if (createResponse.StatusCode == HttpStatusCode.NoContent)
             {
-                newtaskuri = createResponse.Headers.GetValues("OData-EntityId").
+                var newtaskuri = createResponse.Headers.GetValues("OData-EntityId").
                     FirstOrDefault();
 
                 Console.WriteLine("Task '{0}' created. {1}", task.GetValue("subject"), newtaskuri);
                 return newtaskuri;
             }
-            else
-            {
-                Console.WriteLine("Failed to create task for reason: {0}.", createResponse.ReasonPhrase);
-                throw new CrmHttpResponseException(createResponse.Content);
-            }
+
+            Console.WriteLine("Failed to create task for reason: {0}.", createResponse.ReasonPhrase);
+            throw new CrmHttpResponseException(createResponse.Content);
         }
 
         internal enum TaskStatus
@@ -93,33 +87,30 @@
             var taskUri = httpClient.BaseAddress.OriginalString + $"tasks({taskId})";
 
 
-            JObject taskAdd = new JObject();
+            var taskAdd = new JObject();
 
             if (markAsCompleted)
             {
-                taskAdd.Add("statuscode", (int) TaskStatus.Completed);
-                taskAdd.Add("statecode", (int) TaskState.Completed);
+                taskAdd.Add("statuscode", (int)TaskStatus.Completed);
+                taskAdd.Add("statecode", (int)TaskState.Completed);
                 taskAdd.Add("percentcomplete", 100);
             }
             else
             {
-                taskAdd.Add("statuscode", (int) TaskStatus.InProgress);
-                taskAdd.Add("statecode", (int) TaskState.Open);
+                taskAdd.Add("statuscode", (int)TaskStatus.InProgress);
+                taskAdd.Add("statecode", (int)TaskState.Open);
             }
             taskAdd.Add("description", description);
-          //  taskAdd.Add("owninguser", assignTo);
+            //  taskAdd.Add("owninguser", assignTo);
 
-            HttpRequestMessage updateRequest1 = new HttpRequestMessage(
-                new HttpMethod("PATCH"), taskUri);
-            updateRequest1.Content = new StringContent(taskAdd.ToString(),
-                Encoding.UTF8, "application/json");
-            HttpResponseMessage updateResponse1 =
-                await httpClient.SendAsync(updateRequest1);
+            HttpRequestMessage updateRequest1 = new HttpRequestMessage(new HttpMethod("PATCH"), taskUri);
+            updateRequest1.Content = new StringContent(taskAdd.ToString(), Encoding.UTF8, "application/json");
+            HttpResponseMessage updateResponse1 = await httpClient.SendAsync(updateRequest1);
             if (updateResponse1.StatusCode == HttpStatusCode.NoContent) //204
             {
-                
+
                 Console.WriteLine($"Task {taskId} has been updated");
-                return new Guid(); 
+                return new Guid();
             }
 
             //Console.WriteLine("Failed to update contact for reason: {0}",

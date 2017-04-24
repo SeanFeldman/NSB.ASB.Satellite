@@ -1,8 +1,8 @@
-﻿using System;
-using NServiceBus;
-
-namespace CustomerManagementMessages
+﻿namespace CustomerManagementMessages
 {
+    using System;
+    using NServiceBus;
+
     public class UpdateTaskRequest : ICommand
     {
         public Guid TaskId { get; set; }

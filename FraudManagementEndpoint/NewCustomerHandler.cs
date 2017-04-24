@@ -1,11 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using NServiceBus;
-using CustomerManagementMessages;
-using FraudManagementMessages;
-
-namespace FraudManagementEndpoint
+﻿namespace FraudManagementEndpoint
 {
+    using System;
+    using System.Threading.Tasks;
+    using NServiceBus;
+    using CustomerManagementMessages;
+    using FraudManagementMessages;
+
     public class NewCustomerHandler : IHandleMessages<NewCustomerReceived>
     {
         public async Task Handle(NewCustomerReceived message, IMessageHandlerContext context)
@@ -18,7 +18,6 @@ namespace FraudManagementEndpoint
             if (message.FirstName.Contains("y"))
             {
                 fraudResult = new FraudReviewResult { Success=false, ContactId=message.ContactId,ResponseDescription = "New contact has failed fraud review", ReferenceId = new Guid().ToString() };
-
                 Console.WriteLine($"Failed Fraud Review of {message.FirstName} {message.LastName}.");
             }
             else

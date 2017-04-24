@@ -14,15 +14,17 @@
         {
             log.Info($"Received CRM message id: {context.MessageId} (contact: {message.FullName})");
 
-            var newCustomer = new NewCustomerReceived();
-            newCustomer.ContactId = message.ContactId;
-            newCustomer.CreatedById = message.CreatedById;
-            newCustomer.CreateDate = message.CreateDate;
-            newCustomer.FullName = message.FullName;
-            newCustomer.FirstName = message.FirstName;
-            newCustomer.LastName = message.LastName;
-            newCustomer.Address = message.Address;
-            newCustomer.Email = message.Email;
+            var newCustomer = new NewCustomerReceived
+            {
+                ContactId = message.ContactId,
+                CreatedById = message.CreatedById,
+                CreateDate = message.CreateDate,
+                FullName = message.FullName,
+                FirstName = message.FirstName,
+                LastName = message.LastName,
+                Address = message.Address,
+                Email = message.Email
+            };
 
             log.Info($"Created new customer for Customer {newCustomer.ContactId}, Lastname {newCustomer.LastName}, createdby {newCustomer.CreatedById}");
 
